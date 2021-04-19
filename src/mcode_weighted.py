@@ -19,7 +19,7 @@ def mcode(filename):
   edges = defaultdict(zerodict)
 
   # read in graph
-  print >> sys.stderr, 'loading graph...'
+  print('loading graph...', file=sys.stderr)
   with open(filename, 'r') as f:
     for line in f:
       a,b,w = line.split()[:3]
@@ -29,12 +29,12 @@ def mcode(filename):
       edges[a][b], edges[b][a] = w, w
   
   # Stage 1: Vertex Weighting
-  print >> sys.stderr, 'vertex weighting...'
+  print('vertex weighting...', file=sys.stderr)
   weights = dict(
-    (v,sum(edges[v].itervalues()) / len(edges[v])**2) for v in graph)
+    (v,sum(edges[v].values()) / len(edges[v])**2) for v in graph)
   for i,v in enumerate(graph):
     if i > 0 and i % 1000 == 0:
-      print >> sys.stderr, i, '/', len(graph)
+      print(i, '/', len(graph), file=sys.stderr)
 
     neighborhood = set((v,)) | graph[v]
     # if node has only one neighbor, we know everything we need to know
@@ -56,7 +56,7 @@ def mcode(filename):
       k += 1
 
   # Stage 2: Molecular Complex Prediction
-  print >> sys.stderr, 'molecular complex prediction...'
+  print('molecular complex prediction...', file=sys.stderr)
   unvisited = set(graph)
   num_clusters = 0
   for seed in sorted(weights, key=weights.get, reverse=True):
@@ -78,9 +78,9 @@ def mcode(filename):
       cluster -= invalid_nodes
 
     if cluster:
-      print ' '.join(cluster)
+      print(' '.join(cluster))
       num_clusters += 1
-      print >> sys.stderr, num_clusters, len(cluster), seed
+      print(num_clusters, len(cluster), seed, file=sys.stderr)
       if not unvisited: break # quit if all nodes visited
 
 if __name__ == '__main__':

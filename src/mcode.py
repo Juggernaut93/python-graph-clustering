@@ -17,13 +17,13 @@ def mcode(filename):
       a,b = line.split()[:2]
       edges[a].add(b)
       edges[b].add(a)
-  print >> sys.stderr, 'graph loaded; %i nodes' % (len(edges),)
+  print('graph loaded; %i nodes' % (len(edges),), file=sys.stderr)
   
   # Stage 1: Vertex Weighting
-  print >> sys.stderr, 'vertex weighting...'
+  print('vertex weighting...', file=sys.stderr)
   weights = dict((v,1.) for v in edges)
   for i,v in enumerate(edges):
-    if i % 1000 == 0: print >> sys.stderr, i
+    if i % 1000 == 0: print(i, file=sys.stderr)
     neighborhood = set((v,)) | edges[v]
     # if node has only one neighbor, we know everything we need to know
     if len(neighborhood) <= 2: continue
@@ -43,7 +43,7 @@ def mcode(filename):
       (2. * len(k_core)**2))
 
   # Stage 2: Molecular Complex Prediction
-  print >> sys.stderr, 'molecular complex prediction'
+  print('molecular complex prediction', file=sys.stderr)
   unvisited = set(edges)
   num_clusters = 0
   for seed in sorted(weights, key=weights.get, reverse=True):
@@ -70,9 +70,9 @@ def mcode(filename):
       # n for n in set.union(*(edges[c] for c in cluster)) & unvisited
       # if densities[n] > FLUFF_THRESHOLD)
 
-      print ' '.join(cluster)
+      print(' '.join(cluster))
       num_clusters += 1
-      print >> sys.stderr, num_clusters, len(cluster), seed
+      print(num_clusters, len(cluster), seed, file=sys.stderr)
 
 if __name__ == '__main__':
   mcode(sys.argv[1])
